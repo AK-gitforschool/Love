@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>秋恋ストーリー ―クボの文化祭―</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#120d22;overflow:hidden;font-family:"Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;color:#fff}
+#root{position:fixed;inset:0;font-size:clamp(14px,2.5vmin,28px)}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;z-index:20}
+.screen.show{display:flex}
+button{font:inherit;color:inherit;cursor:pointer;border:none}
+
+/* ===== backgrounds ===== */
+#game{position:absolute;inset:0;overflow:hidden;background:#222;user-select:none;cursor:pointer}
+#game.flash::after{content:"";position:absolute;inset:0;background:#fff;animation:fl .6s forwards;z-index:30;pointer-events:none}
+@keyframes fl{from{opacity:.9}to{opacity:0}}
+.bg-class{background:linear-gradient(#cfeaff,#eaf7ff) 8% 10%/22% 30% no-repeat,linear-gradient(#cfeaff,#eaf7ff) 39% 10%/22% 30% no-repeat,linear-gradient(#cfeaff,#eaf7ff) 70% 10%/22% 30% no-repeat,linear-gradient(#f6e6c4 0 62%,#b98b5a 62% 100%)}
+.bg-home{background:radial-gradient(circle at 75% 25%,#fff6c8 0 8%,transparent 9%),linear-gradient(#ffe9d2 0 65%,#d9b48a 65% 100%)}
+.bg-gate{background:radial-gradient(circle at 10% 75%,#e07b39 0 12%,transparent 13%),radial-gradient(circle at 30% 80%,#d4a017 0 10%,transparent 11%),radial-gradient(circle at 70% 78%,#c0522b 0 13%,transparent 14%),radial-gradient(circle at 90% 74%,#e8a33d 0 11%,transparent 12%),linear-gradient(#a9d8ff 0 68%,#c8b790 68% 100%)}
+.bg-aquarium{background:radial-gradient(ellipse at 30% 40%,rgba(120,220,255,.5),transparent 40%),radial-gradient(ellipse at 75% 55%,rgba(80,160,255,.45),transparent 45%),linear-gradient(#0a2a55,#0b4a80 60%,#06304f)}
+.bg-sunset{background:radial-gradient(circle at 78% 55%,#fff1b0 0 7%,#ffb36b 8% 14%,transparent 15%),linear-gradient(#5b6ee1 0%,#f0869a 45%,#ffc18a 70%,#3b2f4a 70% 100%)}
+.bg-festnight{background:radial-gradient(circle at 50% 78%,#ff9a3c 0 6%,rgba(255,120,40,.4) 7% 18%,transparent 30%),linear-gradient(#150f33,#3b1f5b 65%,#1a1230 65% 100%)}
+.bg-library{background:repeating-linear-gradient(90deg,#6b4a2e 0 6%,#8a6240 6% 7%,#7a5535 7% 13%) 0 0/100% 62% no-repeat,linear-gradient(#e9d3b0 0 62%,#9c7248 62% 100%)}
+.bg-council{background:linear-gradient(#10172e,#27345e) 62% 12%/28% 34% no-repeat,linear-gradient(#e7ecf5 0 60%,#8d94a8 60% 100%)}
+.bg-town{background:linear-gradient(90deg,#f4b6b6 0 14%,#b6d4f4 14% 30%,#f4e3b6 30% 48%,#c9f4b6 48% 66%,#e0b6f4 66% 84%,#f4c9b6 84% 100%) 0 28%/100% 42% no-repeat,linear-gradient(#bfe6ff 0 70%,#8e949c 70% 100%)}
+.bg-roof{background:radial-gradient(ellipse at 20% 25%,#fff 0 6%,transparent 7%),radial-gradient(ellipse at 28% 28%,#fff 0 7%,transparent 8%),radial-gradient(ellipse at 70% 18%,#fff 0 6%,transparent 7%),repeating-linear-gradient(90deg,transparent 0 3%,#5a6a78 3% 3.4%) 0 62%/100% 28% no-repeat,linear-gradient(#7cc4ff 0 70%,#9aa6b0 70% 100%)}
+.bg-night{background:radial-gradient(circle at 80% 20%,#fffbd0 0 4%,rgba(255,250,200,.3) 5% 9%,transparent 10%),radial-gradient(circle at 15% 20%,#fff 0 .3%,transparent .5%),radial-gradient(circle at 35% 12%,#fff 0 .3%,transparent .5%),radial-gradient(circle at 55% 25%,#fff 0 .3%,transparent .5%),radial-gradient(circle at 90% 45%,#fff 0 .3%,transparent .5%),radial-gradient(circle at 25% 40%,#fff 0 .3%,transparent .5%),linear-gradient(#0b1030,#1f2b5e 70%,#141a3a 70% 100%)}
+.bg-cafe{background:linear-gradient(#fff3dc,#fff3dc) 60% 10%/28% 30% no-repeat,linear-gradient(#f7e6d0 0 60%,#a8764a 60% 100%)}
+.bg-art{background:linear-gradient(#e8a0a0,#a0c8e8) 12% 18%/12% 26% no-repeat,linear-gradient(#a0e8c0,#e8d8a0) 70% 22%/14% 24% no-repeat,linear-gradient(#f2efe9 0 62%,#c5b49a 62% 100%)}
+.bg-fest{background:repeating-linear-gradient(90deg,transparent 0 5%,#ffd166 5% 5.8%,transparent 6% 11%,#ff6b9d 11% 11.8%) 0 6%/100% 2% no-repeat,linear-gradient(#ffd6a5,#ffadad 55%,#9d6b53 55% 100%)}
+
+/* ===== chara / HUD ===== */
+#chara{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:90%;pointer-events:none;transition:opacity .3s}
+#chara svg{height:100%;width:auto;filter:drop-shadow(0 .5em .8em rgba(0,0,0,.35))}
+#chara.talk svg{animation:bob .35s ease-out}
+@keyframes bob{0%{transform:translateY(0)}40%{transform:translateY(-1.2%)}100%{transform:translateY(0)}}
+#hud{position:absolute;top:2.5%;left:2%;display:flex;flex-direction:column;gap:.4em;z-index:5;pointer-events:none}
+.gauge{display:flex;align-items:center;gap:.5em;font-size:.72em;text-shadow:0 1px 3px #000}
+.gauge .bar{width:9em;height:.9em;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.5);border-radius:1em;overflow:hidden}
+.gauge .bar i{display:block;height:100%;width:0;transition:width .6s}
+#gLove i{background:linear-gradient(90deg,#ff7aa8,#ff3d77)}
+#gRival i{background:linear-gradient(90deg,#7aa8ff,#3d4dff)}
+#gDark i{background:linear-gradient(90deg,#9b59b6,#2c003e)}
+#menu{position:absolute;top:2.5%;right:2%;display:flex;gap:.4em;z-index:6}
+#menu button{background:rgba(20,10,40,.65);border:1px solid rgba(255,255,255,.4);border-radius:.6em;padding:.25em .7em;font-size:.7em}
+#menu button.on{background:#ff4f8b}
+#chTitle{position:absolute;inset:0;z-index:25;display:none;align-items:center;justify-content:center;background:rgba(10,5,25,.82);font-size:1.7em;letter-spacing:.15em;text-align:center;padding:1em}
+#chTitle.show{display:flex;animation:fi .5s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+#textbox{position:absolute;left:3%;right:3%;bottom:3%;min-height:25%;background:rgba(20,12,45,.86);border:2px solid rgba(255,255,255,.4);border-radius:1em;padding:1.4em 1.4em 1em;z-index:8;box-shadow:0 .3em 1.2em rgba(0,0,0,.45)}
+#name{position:absolute;left:1em;top:-1.1em;background:#ff4f8b;padding:.1em 1em;border-radius:.8em;font-weight:bold;display:none}
+#name.k{background:#4b7bff}#name.r{background:#444a66}#name.t{background:#6c6f85}
+#text{line-height:1.7;min-height:3.4em;white-space:pre-wrap}
+#next{position:absolute;right:1em;bottom:.5em;animation:blink 1s infinite;visibility:hidden}
+@keyframes blink{50%{opacity:.2}}
+#choices{position:absolute;inset:0 0 28% 0;z-index:9;display:none;flex-direction:column;align-items:center;justify-content:center;gap:.8em;padding:0 8%}
+#choices.show{display:flex}
+#choices button{width:min(46em,92%);background:linear-gradient(180deg,#ff8fb8,#e0408a);border:2px solid #fff;border-radius:2em;padding:.65em 1em;box-shadow:0 .2em .7em rgba(0,0,0,.4);font-weight:bold;transition:transform .12s}
+#choices button:hover{transform:scale(1.03)}
+.pop{animation:pop .6s}
+@keyframes pop{30%{transform:scale(1.25)}}
+
+/* ===== screens ===== */
+#titleScr{background:radial-gradient(circle at 50% 30%,#ff8fb8 0,#7b3fa8 45%,#1a0f3a 100%)}
+#titleScr h1{font-size:2.6em;text-align:center;line-height:1.3;text-shadow:0 .1em .4em rgba(0,0,0,.5);letter-spacing:.08em}
+#titleScr h1 small{display:block;font-size:.4em;letter-spacing:.3em;opacity:.85}
+#titleScr .btns{display:flex;flex-direction:column;gap:.8em;margin-top:2em;width:min(20em,80%)}
+.bigbtn{background:rgba(255,255,255,.16);border:2px solid #fff;border-radius:2em;padding:.6em 1em;font-weight:bold;transition:.15s}
+.bigbtn:hover{background:#ff4f8b}
+.bigbtn:disabled{opacity:.35;cursor:not-allowed}
+.note{font-size:.62em;opacity:.8;margin-top:1.4em;text-align:center;line-height:1.7;max-width:36em;padding:0 1em}
+#selectScr,#galScr{background:linear-gradient(#2a1650,#120d22);justify-content:flex-start;padding:2% 2% 1%;overflow:auto}
+#selectScr h2,#galScr h2{margin:.3em 0}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5em,1fr));gap:.8em;width:min(70em,100%);margin:.5em 0}
+.card{background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.3);border-radius:1em;padding:.4em;text-align:center;cursor:pointer;transition:.15s}
+.card:hover{transform:translateY(-.2em)}
+.card.sel{border-color:#ff4f8b;background:rgba(255,79,139,.25)}
+.card .pt{height:7em;background:linear-gradient(#fbe3f0,#dfe9ff);border-radius:.7em;overflow:hidden}
+.card .pt svg{height:100%;width:100%}
+.card b{display:block;font-size:.85em;margin-top:.3em}
+.tag{display:inline-block;font-size:.58em;background:#ff4f8b;border-radius:1em;padding:.05em .7em;margin:.15em .1em}
+.tag.b{background:#4b7bff}
+#info{width:min(70em,100%);background:rgba(0,0,0,.35);border-radius:1em;padding:.8em 1em;min-height:5em;font-size:.82em;line-height:1.7}
+#selBtns{display:flex;gap:1em;margin:.6em 0 1em}
+#endScr{background:rgba(10,5,25,.93);text-align:center;padding:1em}
+#endScr .ty{font-size:.9em;letter-spacing:.3em;color:#ffb0cc}
+#endScr h2{font-size:2em;margin:.4em 0 .8em;text-shadow:0 0 .6em #ff4f8b}
+#endScr .btns{display:flex;gap:.8em;flex-wrap:wrap;justify-content:center}
+#logScr{position:absolute;inset:0;background:rgba(10,5,25,.93);z-index:40;display:none;flex-direction:column;padding:3%}
+#logScr.show{display:flex}
+#logBody{flex:1;overflow:auto;line-height:1.7;font-size:.85em}
+#logBody p{margin:.5em 0}#logBody b{color:#ff9fc4}
+.gal{width:min(60em,100%);margin:.4em 0;background:rgba(255,255,255,.08);border-radius:.8em;padding:.5em .9em;font-size:.8em}
+.gal span{display:inline-block;margin:.15em .5em .15em 0;padding:.05em .8em;border-radius:1em;background:rgba(255,255,255,.12)}
+.gal span.ok{background:#ff4f8b}
+</style>
+</head>
+<body>
+<div id="root">
+
+<div id="game" class="bg-class">
+  <div id="hud">
+    <div class="gauge" id="gLove">♥ 好感度<div class="bar"><i></i></div></div>
+    <div class="gauge" id="gRival">⚠ ライバル接近<div class="bar"><i></i></div></div>
+    <div class="gauge" id="gDark" style="display:none">☾ 執着度<div class="bar"><i></i></div></div>
+  </div>
+  <div id="menu">
+    <button id="bLog">LOG</button><button id="bAuto">AUTO</button><button id="bSkip">SKIP</button><button id="bTitle">TITLE</button>
+  </div>
+  <div id="chara"></div>
+  <div id="choices"></div>
+  <div id="textbox"><div id="name"></div><div id="text"></div><div id="next">▼</div></div>
+  <div id="chTitle"></div>
+</div>
+
+<div id="titleScr" class="screen show">
+  <h1><small>LOVE SIMULATION NOVEL</small>秋恋ストーリー<br>―クボの文化祭―</h1>
+  <div class="btns">
+    <button class="bigbtn" id="tNew">はじめから</button>
+    <button class="bigbtn" id="tCont">つづきから</button>
+    <button class="bigbtn" id="tGal">エンディング一覧</button>
+  </div>
+  <p class="note">文化祭まで、あと三週間。高校二年の秋、あなたの隣にいるのは誰？<br>※登場人物は全員高校生です。全年齢向け／性的な描写はありません。<br>※どのルートにも「ライバルに心を奪われる」切ないバッドエンドがあります。</p>
+</div>
+
+<div id="selectScr" class="screen">
+  <h2>ヒロイン（お相手）を選んでください</h2>
+  <div id="grid"></div>
+  <div id="info">キャラクターを選ぶと紹介が表示されます。</div>
+  <div id="selBtns"><button class="bigbtn" id="sBack">もどる</button><button class="bigbtn" id="sStart" disabled>この人とはじめる</button></div>
+</div>
+
+<div id="galScr" class="screen">
+  <h2>エンディング一覧</h2>
+  <div id="galBody" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
+  <button class="bigbtn" id="gBack" style="margin:.8em 0">もどる</button>
+</div>
+
+<div id="endScr" class="screen">
+  <div class="ty" id="endType"></div>
+  <h2 id="endTitle"></h2>
+  <p class="note" id="endCount"></p>
+  <div class="btns" style="margin-top:1.2em">
+    <button class="bigbtn" id="eRetry">同じ人でもう一度</button>
+    <button class="bigbtn" id="eSel">別の人を選ぶ</button>
+    <button class="bigbtn" id="eTitle">タイトルへ</button>
+  </div>
+</div>
+
+<div id="logScr"><div id="logBody"></div><button class="bigbtn" id="logClose" style="margin-top:.6em">閉じる</button></div>
+
+</div>
+
+<script>
+'use strict';
+/* ================= データ ================= */
+const HEROINES={
+ akiko:{name:'白石アキコ',role:'幼馴染',type:'デレデレ',desc:'隣の家に住む幼馴染。毎朝起こしに来て、お弁当まで作ってくれる甘えん坊。好き好きオーラ全開だけど、他の男子に褒められると…？',hair:'#9a5b55',eye:'#e07a8f',accent:'#ff8fab',style:'long',acc:'ribbon'},
+ yui:{name:'七瀬ユイ',role:'友達（女子）',type:'ツンデレ',desc:'クラスメイトで腐れ縁。口は悪いけど世話焼きで、素直になれない女の子。サッカー部のエースに憧れているらしい。',hair:'#7b4a2a',eye:'#c0392b',accent:'#ff6b81',style:'twin',acc:'ribbon'},
+ saya:{name:'一ノ瀬サヤ',role:'先輩',type:'ヤンデレ',desc:'完璧な生徒会長。優しい微笑みの裏に、底の見えない執着を隠している三年生。…あなたの木曜の行動、なぜ知っているの？',hair:'#1d1b3a',eye:'#8e44ad',accent:'#7d3c98',style:'long',acc:'',dark:true},
+ mio:{name:'高坂ミオ',role:'友達の姉',type:'お姉さん系（略奪）',desc:'親友の姉で三年生。包容力のある笑顔で「弟みたい」と言うけれど、彼氏持ち。寂しそうな横顔が気になって…。',hair:'#a4693d',eye:'#a0522d',accent:'#f39c12',style:'pony',acc:'clip'},
+ haruki:{name:'東雲ハルキ',role:'男友達',type:'ツンデレ',desc:'いつも一緒の親友。不器用で照れ屋、ぶっきらぼうだけど面倒見がいい。距離が近すぎて、気づけば目で追っている。',hair:'#3a3f4b',eye:'#2c3e50',accent:'#e74c3c',style:'short',boy:true},
+ emily:{name:'エミリー・ウォーカー',role:'留学生（女子）',type:'ストレート系デレ',desc:'イギリスから来た留学生。日本のアニメと和菓子が大好き。思ったことは全部まっすぐ伝える、素直すぎる女の子。',hair:'#e9c46a',eye:'#3a86ff',accent:'#e63946',style:'bob',acc:'ribbon'},
+ leon:{name:'レオン・ベルナール',role:'留学生（男子）',type:'クーデレ紳士',desc:'フランスから来た美術好きの留学生。物静かで礼儀正しく、ふとした言葉が詩のよう。静かな視線の先には…。',hair:'#8a7a6a',eye:'#4b7f8f',accent:'#355c7d',style:'short',boy:true},
+ luna:{name:'神楽坂ルナ',role:'転入生（トランスジェンダー女子）',type:'内気・繊細',desc:'新しい学校で、自分らしく過ごしたいと願う転入生。控えめで優しく、あなたにだけそっと秘密を打ち明ける。',hair:'#4a3b78',eye:'#7b68ee',accent:'#b39ddb',style:'long',acc:'clip'}
+};
+const ORDER=['akiko','yui','saya','mio','haruki','emily','leon','luna'];
+
+/* ================= 立ち絵 ================= */
+function portrait(c,ex,crop){
+  ex=ex||'normal';
+  const skin='#ffe4d4',hair=c.hair,ac=c.accent,boy=!!c.boy,suit=boy?'#2b3050':'#394078',ec=c.eye;
+  let back='';
+  if(c.style==='twin')back='<path d="M54 70Q16 140 38 220Q60 200 62 150Z" fill="'+hair+'"/><path d="M146 70Q184 140 162 220Q140 200 138 150Z" fill="'+hair+'"/>';
+  else if(c.style==='long')back='<path d="M52 66Q26 190 48 262L152 262Q174 190 148 66Z" fill="'+hair+'"/>';
+  else if(c.style==='pony')back='<path d="M138 48Q198 84 172 180Q158 124 136 92Z" fill="'+hair+'"/>';
+  else if(c.style==='bob')back='<path d="M50 70Q40 146 60 156L140 156Q160 146 150 70Z" fill="'+hair+'"/>';
+  const body='<path d="M26 300Q30 190 100 172Q170 190 174 300Z" fill="'+suit+'"/><path d="M80 174L100 218L120 174Z" fill="#fff"/>'+
+    (boy?'<path d="M95 182L105 182L109 238L100 248L91 238Z" fill="'+ac+'"/>':'<path d="M100 194L76 182L78 212ZM100 194L124 182L122 212Z" fill="'+ac+'"/><circle cx="100" cy="195" r="6" fill="'+ac+'"/>');
+  const neck='<rect x="87" y="136" width="26" height="40" rx="10" fill="#f6d2bc"/>';
+  const head='<ellipse cx="100" cy="94" rx="46" ry="52" fill="'+skin+'"/>';
+  const front=boy?'<path d="M52 96Q42 34 100 32Q158 34 148 96Q142 64 120 60Q112 76 98 62Q84 80 68 62Q56 70 52 96Z" fill="'+hair+'"/>':
+    '<path d="M52 100Q42 32 100 30Q158 32 148 100Q142 68 120 62Q106 84 88 62Q62 72 52 100Z" fill="'+hair+'"/>';
+  let acc='';
+  if(c.acc==='ribbon')acc='<path d="M136 44L160 34L158 62ZM136 44L118 32L116 60Z" fill="'+ac+'"/>';
+  if(c.acc==='clip')acc='<rect x="58" y="52" width="26" height="7" rx="3.5" fill="'+ac+'" transform="rotate(-24 71 55)"/>';
+  const eye=(x,rx,ry)=>'<ellipse cx="'+x+'" cy="100" rx="'+rx+'" ry="'+ry+'" fill="#fff"/><ellipse cx="'+x+'" cy="101" rx="'+(rx-2)+'" ry="'+(ry-1.5)+'" fill="'+ec+'"/><circle cx="'+x+'" cy="102" r="'+(rx-5)+'" fill="#222"/><circle cx="'+(x-2.5)+'" cy="97" r="2.4" fill="#fff"/>';
+  const closed=x=>'<path d="M'+(x-9)+' 102Q'+x+' 91 '+(x+9)+' 102" stroke="#4a2f2a" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  const brow=(a,b)=>'<path d="'+a+'" stroke="#4a2f2a" stroke-width="3" fill="none" stroke-linecap="round"/><path d="'+b+'" stroke="#4a2f2a" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  const ml=d=>'<path d="'+d+'" stroke="#b5483c" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+  let eyes,brows='',mouth,extra='';
+  switch(ex){
+    case 'smile':eyes=closed(80)+closed(120);mouth='<path d="M88 120Q100 134 112 120Z" fill="#fff" stroke="#b5483c" stroke-width="2.5"/>';break;
+    case 'blush':eyes=eye(80,8,11)+eye(120,8,11);brows=brow('M70 84Q80 79 90 83','M110 83Q120 79 130 84');mouth=ml('M92 122Q100 128 108 122');extra='<ellipse cx="66" cy="114" rx="11" ry="6" fill="#ff7b95" opacity=".5"/><ellipse cx="134" cy="114" rx="11" ry="6" fill="#ff7b95" opacity=".5"/>';break;
+    case 'angry':eyes=eye(80,8,10)+eye(120,8,10);brows=brow('M68 76L92 85','M132 76L108 85');mouth=ml('M91 127Q100 119 109 127');extra='<path d="M146 62l6-6M152 62l-6-6" stroke="#e74c3c" stroke-width="3"/>';break;
+    case 'sad':eyes=eye(80,8,11)+eye(120,8,11);brows=brow('M68 86L92 79','M132 86L108 79');mouth=ml('M91 127Q100 119 109 127');extra='<path d="M70 112Q66 122 71 126Q76 120 70 112Z" fill="#8fd3ff"/>';break;
+    case 'surprised':eyes=eye(80,9,13)+eye(120,9,13);brows=brow('M70 80Q80 72 90 79','M110 79Q120 72 130 80');mouth='<ellipse cx="100" cy="125" rx="5" ry="7" fill="#9b3a3a"/>';break;
+    case 'dark':eyes='<ellipse cx="80" cy="100" rx="8" ry="11" fill="#fff"/><ellipse cx="80" cy="101" rx="7.5" ry="10.5" fill="'+ec+'"/><ellipse cx="120" cy="100" rx="8" ry="11" fill="#fff"/><ellipse cx="120" cy="101" rx="7.5" ry="10.5" fill="'+ec+'"/>';brows=brow('M70 83Q80 80 90 84','M110 84Q120 80 130 83');mouth='<path d="M82 118Q100 142 118 118Z" fill="#fff" stroke="#b5483c" stroke-width="2.5"/>';extra='<rect x="60" y="84" width="80" height="12" fill="#000" opacity=".14"/>';break;
+    default:eyes=eye(80,8,11)+eye(120,8,11);brows=brow('M70 84Q80 79 90 83','M110 83Q120 79 130 84');mouth=ml('M92 122Q100 126 108 122');
+  }
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(crop?'28 14 144 150':'0 0 200 300')+'">'+back+body+neck+head+eyes+brows+mouth+extra+front+acc+'</svg>';
+}
+
+/* ================= シナリオ ================= */
+// 行形式: 'n|地の文' 'k|クボ' 'h|表情|ヒロイン' 'r|ライバル' 't|名前|第三者' 'bg|背景'
+const o=(t,l,r,d,...a)=>({t,l,r,d,a});
+const Q=(...x)=>({q:x});
+const ROUTES={};
+
+/* ---------- アキコ（幼馴染・デレデレ） ---------- */
+ROUTES.akiko={rival:'桐谷レン',ch:[
+{bg:'home',title:'第一話　朝はアキコと一緒に',l:[
+'n|朝。カーテンの隙間から差し込む光と、聞き慣れた声で目が覚めた。',
+'h|smile|クーボくん！ 朝だよー！ 起きないと、ほっぺたつんつんしちゃうよー？',
+'k|うわっ！ アキコ！？ 勝手に部屋に入るなって言っただろ！',
+'h|smile|だって、おばさんが「いつでもどうぞ」って言ってくれたんだもん。えへへ。',
+'h|blush|今日はね、クボくんの好きな卵焼き、いっぱい入れたよ！ 早起きして作ったの！',
+Q(o('アキコの卵焼きが一番好きだ。ありがとう',2,0,0,'h|blush|えへへへ……！ もう、クボくんってば！ 毎日作っちゃう！'),
+  o('毎朝は悪いよ。自分で起きられるって',1,1,0,'h|sad|……うん、わかった。でもやっぱり、明日も来る！'),
+  o('いいから出てけ！ 着替えるから！',0,2,0,'h|angry|ひどい！ ……でも、そんなクボくんも好きっ！')),
+'bg|gate',
+'n|並んで登校する。アキコは歩きながら、ずっと俺の袖をちょこんと掴んでいた。',
+'n|校門で、隣のクラスの桐谷レンが声をかけてきた。',
+'r|おはよう、白石さん。今日も可愛いね。',
+'h|surprised|え、あ、ありがとうございます……！',
+'n|アキコが他の男に褒められて照れている。そんな顔、俺は見たことがなかった。']},
+{bg:'aquarium',title:'第二話　水族館デート',l:[
+'n|日曜日。アキコに「どうしても行きたいの！」と押し切られ、水族館へやってきた。',
+'h|smile|みてみて！ クラゲ！ ふわふわで、きれい……。',
+'h|normal|ねえクボくん。小さい頃も、ここ来たよね。覚えてる？',
+Q(o('もちろん。アキコが手を離さなかったことも覚えてる',2,0,0,'h|blush|だって、離したらいなくなっちゃいそうだったんだもん……今も、そうだよ。'),
+  o('お前がペンギンに追いかけられて泣いた話だろ',1,0,0,'h|blush|もー！ 忘れてよ！ ……でも、覚えててくれて嬉しい。'),
+  o('えっと……そうだっけ？',0,1,0,'h|sad|……そっか。私だけ、覚えてるんだね。')),
+'n|薄暗い水槽の前で、見覚えのある背中。桐谷レンが、友達と来ていた。',
+'r|あれ、白石さんじゃん。偶然だね。よかったら一緒に回らない？',
+Q(o('悪いけど、今日は俺たちだけで回るんだ',2,0,0,'h|surprised|クボくん……！','h|smile|えへへ、今の、ちょっとかっこよかったよ！','r|あはは、了解。じゃあまた学校で。'),
+  o('……アキコは、どうしたい？',1,1,0,'h|normal|私は、クボくんと一緒がいい。……でも、断るのも悪いかな。','r|じゃあ、みんなで行こう！'),
+  o('行きたいなら行ってきていいぞ',0,2,0,'h|sad|……え？ ……クボくんが、そう言うなら。','n|アキコは少し寂しそうに笑って、レンの隣へ歩いていった。'))]},
+{bg:'class',title:'第三話　衣装係と執事服',l:[
+'n|文化祭準備。クラスの出し物は「執事喫茶」。衣装係のアキコが、張り切って俺を捕まえた。',
+'h|smile|見て見て！ クボくんの執事服、私が全部作ったんだよ！ 着てみて？',
+'n|着替えて戻ると、アキコは両手で口を押さえて固まった。',
+'h|blush|……かっこいい。……ど、どうしよう、心臓が持たないかも……',
+'n|そこへレンが衣装合わせの手伝いに来て、アキコの隣に座った。',
+'r|白石さん、ここの縫い方、教えてくれる？ 手先が器用なんだね。',
+'h|normal|え、えっと……あの……',
+'n|アキコが困ったように、ちらりと俺を見た。',
+Q(o('アキコ、こっち手伝ってくれ',2,0,0,'h|smile|うんっ！ すぐ行く！'),
+  o('楽しそうだな、二人とも',0,2,0,'h|surprised|え？ ……クボくん、怒ってる？'),
+  o('黙って様子を見る',0,1,0,'h|sad|……クボくん？')),
+'bg|sunset',
+'n|夕方。作業を終えた教室で、アキコがぽつりと言った。',
+'h|blush|ねえクボくん。私ね、クボくんが他の子と話してると、胸がぎゅってなるの。',
+'h|sad|これって……わがままかな？',
+Q(o('わがままじゃない。俺も同じだよ',2,0,0,'h|blush|……っ！ 嬉しい。すっごく嬉しい……！'),
+  o('気のせいだろ',0,2,0,'h|sad|……そう、かな。……そうだよね。'))]},
+{bg:'festnight',title:'最終話　後夜祭の約束',l:[
+'n|文化祭当日。執事喫茶は、アキコの衣装のおかげで大盛況だった。',
+'n|そして夜、後夜祭。校庭の火を遠くに眺めながら、アキコが俺を中庭へ連れ出した。',
+'h|normal|あのね、クボくん。今日は、ずっと言いたかったことがあるの。',
+'h|blush|小さい頃からずっと、ずーっと。クボくんのことが、大好きでした。',
+'h|sad|幼馴染のままでいたら、ずっとそばにいられるって思ってた。でも、誰かに取られちゃうのは、やだ。',
+'h|blush|だから……答え、聞かせてほしいな。',
+Q(o('俺も好きだ。これからは恋人として、隣にいてほしい',2,0,0,'h|surprised|……！','h|blush|うん……！ うんっ！ ずっと、ずーっと隣にいる！'),
+  o('一緒にいるのが当たり前だと思ってた。でも今は違う。好きだ',2,0,0,'h|blush|クボくん……！ 嬉しい……！'),
+  o('……ごめん。少し、考えさせてほしい',0,2,0,'h|sad|……うん。待つよ。……待てる、かな。'))]}
+],end:{
+true:{t:'毎朝、君の隣で',l:['h|blush|えへへ……じゃあ明日からは、「幼馴染」じゃなくて「彼女」として起こしに行くね！','k|いや、どっちにしても勝手に入るのはやめろ。','h|smile|やだっ！ 毎日来る！ ずーっと来る！','n|火の粉が夜空に舞い上がる。繋いだ手は、小さい頃よりずっと温かかった。']},
+normal:{t:'変わらない朝',l:['n|あれから、アキコは毎朝起こしに来てくれる。ただ、少しだけ距離がぎこちない。','h|normal|あのね、クボくん。いつか、答え……聞かせてね。','n|幼馴染のままでいる日々は、心地よくて、少しだけ切なかった。']},
+ntr:{t:'知らない笑顔',l:['n|その翌朝、アキコは起こしに来なかった。','n|校門の前で、アキコはレンと並んで歩いていた。','h|smile|あ、クボくん。……おはよう。','n|「クボくん」の後ろに、いつもの「えへへ」はなかった。','n|彼女の隣は、もう——俺の場所じゃなかった。']}
+}};
+
+/* ---------- ユイ（友達・ツンデレ） ---------- */
+ROUTES.yui={rival:'天城ソウマ',ch:[
+{bg:'class',title:'第一話　日直日誌と夕焼け',l:[
+'n|十月。文化祭まで、あと三週間。',
+'n|放課後の二年B組。窓の外は、秋の夕焼けに染まりはじめている。',
+'h|angry|ちょっとクボ！ 日直の日誌、まだ出してないでしょ！ 私が先生に怒られるんだけど！',
+'k|あ、悪い。完全に忘れてた。',
+'h|normal|はぁ……ほんっと、あんたは私がいないと何もできないんだから。',
+'h|blush|べ、別にあんたのために言ってるんじゃないからね！ クラスの評価が下がるのが嫌なだけ！',
+Q(o('いつも助かるよ。ありがとな、ユイ',2,0,0,'h|blush|っ……！ き、急に素直になるのやめてよ。調子狂うじゃない……'),
+  o('ユイって、ほんと世話焼きだよな',1,1,0,'h|normal|世話焼きじゃない！ ……まあ、嫌いじゃないけど。'),
+  o('うるさいなぁ、あとでやるって',0,2,0,'h|angry|あっそ！ 勝手にすれば！')),
+'n|そこへ、サッカー部のエース・天城ソウマ先輩が教室を覗き込んだ。',
+'r|七瀬、文化祭実行委員の件でちょっといい？',
+'h|smile|は、はいっ！ 今行きます！',
+'n|ユイは、俺には見せたことのない柔らかい笑顔で駆けていった。',
+'n|……なんだよ、あの顔。胸の奥が、少しだけざわついた。']},
+{bg:'town',title:'第二話　日曜日の買い出し',l:[
+'n|日曜日。文化祭の材料の買い出しに、なぜかユイと二人で出かけることになった。',
+'h|normal|荷物持ち、よろしくね。あんたが適任でしょ。',
+'n|商店街を歩く。ユイはいつもより少しおしゃれな私服だった。',
+Q(o('その服、似合ってるな',2,0,0,'h|blush|なっ……！ 見てたの！？ ……ばか。','h|smile|でも、ありがと。'),
+  o('荷物、多くないか？',1,1,0,'h|angry|文句あるなら半分持ってよ！'),
+  o('スマホ見ながら歩くと迷子になるぞ',0,1,0,'h|normal|ならないわよ！ ……たぶん。')),
+'n|雑貨屋の前で、ユイが小さなキーホルダーをじっと見つめている。',
+'h|smile|……かわいい。',
+Q(o('買ってやるよ。文化祭の頑張り賃だ',2,0,0,'h|blush|え、いいの？ ……じゃ、じゃあ遠慮なく。','h|blush|大事にする。……あんたも、ちゃんと私の隣にいなさいよ。'),
+  o('見るだけ見て帰ろうぜ',0,1,0,'h|sad|……そう。そうよね。'),
+  o('ソウマ先輩にでも買ってもらえば？',0,2,0,'h|angry|……っ！ あんたってほんと最低！','n|ユイは唇を噛んで、先に歩き出してしまった。'))]},
+{bg:'class',title:'第三話　夜の教室',l:[
+'n|文化祭準備は佳境。クラスの出し物は「喫茶店」。ユイは接客リーダー、俺は看板担当だ。',
+'h|angry|ちょっと！ 看板、字が曲がってる！ やり直し！',
+'k|細かいなぁ……',
+'bg|sunset',
+'n|みんなが帰ったあとの教室。俺とユイだけが、作業を続けていた。',
+'h|normal|……ねえ、クボ。',
+'h|sad|私、ソウマ先輩に告白されたの。',
+'k|——え？',
+Q(o('……お前は、どうしたいんだ？',1,0,0,'h|blush|……わかんない。先輩はいい人だし。でも、なんでかあんたの顔が浮かぶのよ。'),
+  o('よかったじゃん。応援するよ',0,3,0,'h|sad|……あ、そう。あんたはそう言うんだ。','h|sad|わかった。ちゃんと考えてみる。'),
+  o('行くなよ。……俺の隣にいてくれ',2,0,0,'h|blush|……！ ば、ばか……そんな顔で言わないでよ……'))]},
+{bg:'festnight',title:'最終話　後夜祭',l:[
+'n|文化祭当日。教室の喫茶店は大盛況のまま、幕を閉じた。',
+'n|夜、後夜祭のキャンプファイヤー。炎の光が、みんなの頬を赤く染めている。',
+'n|人の輪から離れた校舎裏で、ユイが待っていた。',
+'h|normal|……来たわね。先輩の返事、まだしてないの。',
+'h|blush|答え、あんたに決めてほしいなんて言わない。でも、先に聞いておきたいことがある。',
+'h|blush|クボ。私のこと、どう思ってる？',
+Q(o('好きだ。ずっと前から',2,0,0,'h|surprised|……っ！','h|blush|ばか……遅いのよ、言うのが……'),
+  o('お前こそ、どうなんだよ',1,1,0,'h|angry|ずるい。……質問に質問で返さないでよ。'),
+  o('大事な友達だと思ってる',0,2,0,'h|sad|……そう。','h|sad|友達、かぁ。'))]}
+],end:{
+true:{t:'素直になれない、でも',l:['n|ユイは真っ赤な顔のまま、俺の袖をぎゅっと掴んだ。','h|blush|……私も。……私も、好き。ずっと前から、あんたのことしか見てなかった。','h|smile|べ、別に今さら素直になったわけじゃないんだからね！ ……でも、今日だけは特別。','n|遠くでキャンプファイヤーの火が弾ける。素直じゃない彼女の手は、温かかった。']},
+normal:{t:'友達以上、恋人未満',l:['h|normal|……うん。わかった。','h|normal|返事は、もう少しだけ待ってて。……私も、ちゃんと自分の気持ち、探すから。','n|文化祭が終わっても、俺たちは言い合いをしながら隣を歩いている。','n|その距離が、いつか変わる日を信じて。']},
+ntr:{t:'奪われた隣の席',l:['n|翌日の昼休み。ユイが、ソウマ先輩と並んで歩いているのを見かけた。','h|normal|あ、クボ。……私ね、先輩とお付き合いすることにしたの。','k|……そっか。おめでとう。','n|笑ったつもりだった。うまく笑えていたかは、わからない。','n|ユイの隣は、もう俺の場所じゃない。']}
+}};
+
+/* ---------- サヤ（先輩・ヤンデレ） ---------- */
+ROUTES.saya={rival:'柊ケイ',darkEnd:true,ch:[
+{bg:'library',title:'第一話　図書室の先輩',l:[
+'n|放課後の図書室。文化祭実行委員の資料を探していると、背後から声がした。',
+'h|smile|見つけた。……探したのよ、クボくん。',
+'k|い、一ノ瀬先輩！？',
+'h|smile|君が図書室にいる時間は、放課後四時十二分から五時半。木曜日だけは、少し早い。',
+'k|……なんで知ってるんですか。',
+'h|smile|生徒会長だもの。後輩のことは把握しておくのが仕事でしょう？ ……ふふ、冗談よ。半分は。',
+Q(o('びっくりしました。でも、気にかけてもらえて嬉しいです',2,0,0,'h|blush|……そう。嬉しいのね。よかった。'),
+  o('先輩になら、全部知られても構いません',2,0,1,'h|dark|……ふふ。いい子ね。だったら、もっと教えてもらおうかしら。'),
+  o('ちょっと怖いです。やめてください',0,2,0,'h|sad|……そうよね。ごめんなさい。気をつけるわ。')),
+'bg|council',
+'n|その日から、先輩のメッセージは朝と夜、必ず届くようになった。',
+'n|生徒会室に資料を届けに行くと、副会長の柊ケイが眼鏡を押し上げた。',
+'r|クボくん、だったな。……会長を困らせるなよ。あの人は完璧に見えて、危ういところがあるから。',
+'k|危うい、ですか？',
+'r|いずれわかる。']},
+{bg:'town',title:'第二話　日曜日の約束',l:[
+'n|日曜日。先輩に誘われて、駅前の本屋街を歩くことになった。',
+'h|smile|ごめんなさいね、急に呼び出して。他の予定は、なかった？',
+'k|いえ、特に。',
+'h|normal|そう、よかった。……断られたら、どうしようかと思っていたの。',
+Q(o('誘ってもらえて嬉しいです。また行きましょう',2,0,0,'h|blush|……ええ。約束ね。'),
+  o('どんな予定があっても、先輩を優先します',2,0,1,'h|dark|……嬉しい。そう言ってくれると思っていたわ。'),
+  o('次は前もって言ってほしいです',1,1,0,'h|sad|……ごめんなさい。気をつけるわね。')),
+'n|本屋で、クラスの女子に声をかけられた。',
+'t|クラスメイト|あ、クボくん！ 文化祭の当番表のことなんだけど、ちょっといい？',
+'n|横で、先輩がすうっと表情を消した。',
+'h|normal|……その子、誰？',
+Q(o('ただのクラスメイトです。先輩、行きましょう',2,0,0,'h|sad|……ええ。ごめんなさい、少し取り乱したわ。'),
+  o('先輩以外の人とは、もう話しません',2,0,1,'h|dark|……ふふ。本当？ 約束よ？'),
+  o('そんなに睨まなくてもいいじゃないですか',0,2,0,'h|angry|睨んでなんかいないわ。……いいえ、そう見えたのね。ごめんなさい。'))]},
+{bg:'council',title:'第三話　生徒会室の夜',l:[
+'n|前夜祭の準備で、生徒会室に二人きり。窓の外はもう暗い。',
+'h|smile|ねえ、クボくん。スマホ、見せてくれる？',
+'k|え？',
+'h|normal|……冗談よ。冗談……よ。',
+'h|dark|ただ、君の連絡先が増えていくのを見ると、胸が苦しくなるの。',
+Q(o('スマホなら見せますよ。隠すことなんてないです',2,0,1,'h|dark|……ありがとう。安心したわ。……安心、できたの。'),
+  o('見せる必要はないと思います。でも、先輩のことは大切です',2,0,0,'h|surprised|……！ ……そう、ね。そう言ってくれる人、初めて。'),
+  o('見せるわけないでしょう',0,2,0,'h|sad|……そうよね。わかってる。わかってるの。')),
+'n|そこへ、柊ケイが入ってきた。',
+'r|会長、少し休まれては。……クボ、ちょっといいか。',
+'r|会長は君に依存している。君が逃げるなら、俺が代わりに隣にいる。それだけは言っておく。',
+Q(o('ありがとうございます。でも、俺は先輩から逃げません',2,0,0,'n|ケイは小さくため息をついた。'),
+  o('依存って、どういうことですか',1,1,0,'r|……本人から聞くといい。'),
+  o('……少し、考えさせてください',0,2,0,'r|考える時間は、あまりないぞ。'))]},
+{bg:'night',title:'最終話　月の下で',l:[
+'n|文化祭当日の夜。人気のない屋上で、先輩が一人、月を見ていた。',
+'h|normal|来てくれたのね。',
+'h|sad|私ね、本当は怖いの。君が誰かの隣にいる姿を想像するだけで、息ができなくなる。',
+'h|sad|こんな私、嫌いでしょう？',
+Q(o('そんな先輩も含めて、好きです。少しずつ、一緒に変わっていきましょう',2,0,0,'h|blush|……っ。……ずるい人。そんなこと言われたら、手放せなくなる。'),
+  o('どんな先輩でも構いません。俺は、先輩だけのものです',2,0,1,'h|dark|……ああ。やっと、手に入った。'),
+  o('正直、重いです',0,2,0,'h|sad|……そう。……そうよね。ありがとう、正直に言ってくれて。'))]}
+],end:{
+true:{t:'隣を歩く約束',l:['h|blush|……約束して。私が不安になったら、ちゃんと言うわ。君も、困ったらちゃんと言って。','h|smile|一人で抱え込まない。それが、私たちの約束。','n|先輩の手は少し震えていたけれど、確かに温かかった。','n|月明かりの下、二人の影が寄り添う。']},
+dark:{t:'二人だけの鳥籠',l:['h|dark|ふふ……ふふふ。嬉しい。嬉しいわ、クボくん。','h|dark|これからは、登下校も、お昼も、放課後も、全部一緒。連絡は、いつでも返してね？','h|smile|大丈夫。何も怖くないの。私が、ずっと見ているから。','n|優しい笑顔のまま、先輩は俺の手を強く握りしめた。','n|……もう、離してもらえそうにない。']},
+normal:{t:'遠い月',l:['h|sad|ごめんなさい。まだ私、自分が怖いの。','h|normal|でも、いつか……ちゃんと向き合えたら、また会ってくれる？','n|卒業までの半年間、先輩とは「先輩と後輩」のままだった。','n|それでも、月を見るたびに、あの夜の横顔を思い出す。']},
+ntr:{t:'会長の隣',l:['n|文化祭が終わり、数日後。生徒会室の前で、先輩とケイが並んで歩いているのを見かけた。','h|normal|あら、クボくん。……ごめんなさい、もう連絡はしなくていいわ。','h|smile|ケイくんが、そばにいてくれるから。','n|先輩の笑顔は、穏やかで、静かで……もう俺を映していなかった。']}
+}};
+
+/* ---------- ミオ（友達の姉・略奪） ---------- */
+ROUTES.mio={rival:'久遠リョウ',ch:[
+{bg:'home',title:'第一話　親友の家',l:[
+'n|放課後。俺は親友ハルキの家で、いつものようにゲームをしていた。',
+'t|ハルキ|やべ、母さんに買い出し頼まれた！ クボ、ちょっと待っててくれ。',
+'n|一人でリビングに降りると、ソファで制服姿のミオさんがうたた寝していた。',
+'h|surprised|ん……あれ、クボくん？ やだ、寝ちゃってた。',
+'h|smile|ふふ。クボくんがうちにいるの、なんか落ち着くなぁ。弟がもう一人増えたみたい。',
+Q(o('弟扱いは、ちょっと悔しいです',2,0,0,'h|blush|え？ ……もう、大人びたこと言って。'),
+  o('ミオさんのお姉さんぶり、嫌いじゃないです',1,0,0,'h|smile|ありがと。いい子いい子。'),
+  o('はは、弟ですよね。すみません',0,1,0,'h|normal|うん。……そう、だよね。')),
+'n|そのとき、ミオさんのスマホが鳴った。画面には「リョウ」の文字。',
+'h|normal|あ、彼氏から。ちょっとごめんね。',
+'h|sad|……うん、わかった。また部活でしょ。大丈夫、気にしないで。',
+'n|通話を終えたミオさんは、笑顔の端が少しだけ下がっていた。',
+'n|彼氏、いたんだ。……そりゃ、そうか。']},
+{bg:'cafe',title:'第二話　雨の帰り道',l:[
+'n|数日後、ミオさんに「ちょっと付き合って」と言われ、駅前のカフェに来た。',
+'h|normal|ごめんね、急に。……誰かに聞いてほしくて。リョウとの約束、また流れちゃったの。',
+'h|sad|今月で三回目。私、重いのかな。',
+Q(o('寂しいなら、俺が話を聞きます。いつでも',2,0,0,'h|blush|……ありがとう。クボくん、優しいね。'),
+  o('それは……ひどいですね',1,0,0,'h|sad|ひどい、かな。……ふふ、でも、聞いてくれてスッとした。'),
+  o('彼氏さんも忙しいんですよ、きっと',0,2,0,'h|normal|……そっか。そうだよね。ごめんね、変な話して。')),
+'n|店を出ると、雨が降っていた。傘は一本だけ。',
+'h|smile|相合い傘、する？',
+Q(o('濡れるのは俺で大丈夫です。ミオさんが濡れないように',2,0,0,'h|blush|もう、かっこつけちゃって……'),
+  o('二人で入りましょう',1,0,0,'h|smile|うん。じゃあ、お邪魔します。'),
+  o('走って帰りましょう！',0,1,0,'h|surprised|えっ、ちょっと！ 待ってよ！'))]},
+{bg:'fest',title:'第三話　軽音ステージのリハーサル',l:[
+'n|文化祭準備。三年生のミオさんは、軽音部のキーボードとしてステージに出る。',
+'n|俺はハルキと一緒に、機材運びを手伝っていた。',
+'n|リハーサルの休憩中、彼氏のリョウ先輩がやってきた。',
+'r|おう、ミオ。リハ長引きそうだから、先に飯行ってていい？',
+'h|normal|……うん。',
+'n|ミオさんの髪は昨日切ったばかりなのに、リョウ先輩は気づいていないようだった。',
+'n|リハが終わったあと、誰もいない舞台袖で、ミオさんが小さく言った。',
+'h|sad|私ね、頑張って彼氏に合わせてるの。でも最近、自分がわからなくなってきて。',
+Q(o('無理しなくていい。ミオさんは、ミオさんのままで素敵です',2,0,0,'h|blush|……クボくん。ありがとう。'),
+  o('俺なら気づきます。髪を切ったことも、笑ってない時も',2,0,0,'h|surprised|……！ ……気づいて、くれてたんだ。'),
+  o('好きなら、もう少し頑張ってみては？',0,2,0,'h|normal|……そうだね。頑張ってみる。'))]},
+{bg:'fest',title:'最終話　ステージの後で',l:[
+'n|文化祭当日。ミオさんのキーボードは、体育館いっぱいに響いた。',
+'n|ステージが終わり、人の流れが引いたあとの舞台袖。',
+'r|ミオ、おつかれ！ 打ち上げ行こうぜ。今日はずっと一緒にいられるからさ。',
+'n|ミオさんは、リョウ先輩と俺を交互に見て、小さく息を吸った。',
+'h|normal|……クボくん。私、どうしたらいいと思う？',
+Q(o('行かないでください。……ミオさんの隣に、俺じゃだめですか',2,0,0,'h|surprised|……！','h|blush|……ずるいなぁ。そんなこと、今言うんだ。'),
+  o('ミオさん自身が決めてください。でも俺は、ここで待ってます',1,0,0,'h|blush|……ありがとう。ちゃんと、自分で決める。'),
+  o('行ってあげてください。彼氏さんが待ってます',0,3,0,'h|sad|……そっか。そう、だよね。'))]}
+],end:{
+true:{t:'弟じゃなくて',l:['h|normal|リョウ、ごめん。私、今日は行けない。……ううん、もう、行かない。','r|はぁ？ ミオ、何言って——','h|smile|クボくん。……もう「弟」なんて呼べないね。','n|ミオさんの手が、そっと俺の手を握った。舞台袖の暗がりで、その手はとても温かかった。']},
+normal:{t:'お姉さんと弟',l:['h|smile|ありがとう。今日は話を聞いてくれて。','h|normal|もう少し、自分の気持ち、整理してみるね。','n|ミオさんは今でも、俺のことを「弟みたいな後輩」と呼ぶ。','n|その呼び名が、いつか変わる日が来るのだろうか。']},
+ntr:{t:'戻っていく背中',l:['h|normal|……うん。ありがと、クボくん。','n|ミオさんはリョウ先輩の隣へ歩いていく。振り返らなかった。','n|遠ざかる背中を、俺はただ、見送ることしかできなかった。']}
+}};
+
+/* ---------- ハルキ（男友達・ツンデレ） ---------- */
+ROUTES.haruki={rival:'水瀬サキ',ch:[
+{bg:'roof',title:'第一話　屋上の卵焼き',l:[
+'n|昼休みの屋上。いつものように、親友の東雲ハルキと弁当を広げていた。',
+'h|normal|お前、また購買のパンかよ。……ほら、卵焼き一個やる。',
+'k|サンキュ。……うまっ。これ、お前が作ったのか？',
+'h|blush|べ、別にお前のために作ったわけじゃねーからな！ 余ったんだよ！',
+Q(o('ハルキの卵焼き、毎日食べたいくらいだ',2,0,0,'h|blush|は、はぁ！？ お前、さらっとそういうこと言うなよ！'),
+  o('さんきゅー。お前、いい嫁になるな',1,0,0,'h|angry|誰が嫁だ！ ……ったく。'),
+  o('ちょっと甘すぎ',0,1,0,'h|angry|だったら食うな！')),
+'n|そこへ、サッカー部マネージャーの後輩・水瀬サキが駆け寄ってきた。',
+'r|ハルキ先輩！ 今度のお弁当、私が作ってきてもいいですか？',
+'h|surprised|お、おう……別に、いいけど。',
+'n|ハルキは、嬉しそうに笑った。その笑顔を見て、なぜか胸の奥がちくりとした。']},
+{bg:'town',title:'第二話　ゲーセンの帰り道',l:[
+'n|日曜日。ハルキに誘われ、駅前のゲームセンターに来た。',
+'h|smile|よっしゃ！ 俺の勝ち！ 負けたやつが、ジュース奢りな！',
+'k|くそっ……もう一回！',
+'n|何度やっても勝てない。ハルキは楽しそうに笑っていた。',
+'bg|sunset',
+'n|帰り道、自販機の前で、ハルキが缶ジュースを二本買った。',
+'h|normal|ほら、お前の分。……さっきのは、おまけだ。',
+Q(o('お前と遊ぶの、やっぱり一番楽しいわ',2,0,0,'h|blush|……そ、そうかよ。俺も、まあ……悪くないけど。'),
+  o('次は絶対勝つからな',1,0,0,'h|smile|おう。いつでも相手してやるよ。'),
+  o('サキちゃんと遊びに行かなくていいのか？',0,2,0,'h|normal|は？ ……あー、あいつはただの後輩だって。')),
+'n|夕焼けの河川敷を二人で歩く。ふいに、ハルキの肩が俺の肩に触れた。',
+'h|blush|……わ、悪い。',
+'h|normal|なあ。お前さ、好きなやつ、いるのか？',
+Q(o('……いるよ。たぶん、一番近くに',2,0,0,'h|surprised|……っ！ そ、そうか……'),
+  o('いないな。ハルキは？',1,0,0,'h|normal|……さあな。'),
+  o('特にいない。ハルキこそサキちゃんとどうなんだよ',0,2,0,'h|normal|……別に。'))]},
+{bg:'class',title:'第三話　看板づくりと告白',l:[
+'n|文化祭準備。ハルキと俺は、看板づくりの担当になった。',
+'h|normal|お前、意外と手先器用だよな。字、きれいだし。',
+'k|ハルキこそ、色塗り上手いじゃん。',
+'h|smile|へへ。……こうやってお前と何か作るの、悪くねーな。',
+'bg|sunset',
+'n|日が暮れた教室。ハルキが筆を置いて、静かに言った。',
+'h|sad|サキから、告白された。',
+'k|……え？',
+'h|normal|お前は、どう思う？',
+Q(o('……行くなよ、ハルキ',2,0,0,'h|surprised|……っ！ お前、それ、どういう意味だよ……'),
+  o('お前の気持ち次第だろ',1,0,0,'h|normal|俺の気持ち、か……'),
+  o('良かったな。応援するよ',0,3,0,'h|sad|……そっか。お前は、そう言うんだな。')),
+'h|blush|……お前さ。俺がいなくなったら、寂しいか？',
+Q(o('寂しいに決まってるだろ。お前は、俺の一番なんだから',2,0,0,'h|blush|……ばか。そういうの、不意打ちすぎんだよ。'),
+  o('まあ、少しは',0,2,0,'h|normal|……少し、か。'))]},
+{bg:'night',title:'最終話　後夜祭の屋上',l:[
+'n|文化祭当日の夜。後夜祭の花火が、夜空に咲いている。',
+'n|屋上に呼び出されると、ハルキは柵に寄りかかって待っていた。',
+'h|normal|……サキには、まだ返事してない。',
+'h|blush|お前に言わなきゃいけないことがある。ずっと、言えなかったこと。',
+'h|blush|俺、お前のことが——',
+Q(o('待って。それは、俺から言わせてくれ。……好きだ、ハルキ',2,0,0,'h|surprised|っ……！','h|blush|……ばか。先に言うなよ。……俺もだ。'),
+  o('最後まで聞くよ。ハルキの言葉で聞きたい',2,0,0,'h|blush|……好きだ。お前が、ずっと好きだった。'),
+  o('ハルキ、俺たち親友だよな？',0,2,0,'h|sad|……ああ。親友、だよな。'))]}
+],end:{
+true:{t:'親友のその先',l:['h|blush|べ、別に、今さら照れてるわけじゃねーからな。','k|顔、真っ赤だぞ。','h|smile|うるせー！ ……でも、ありがとな。','n|花火の光に照らされて、ハルキは今までで一番いい顔で笑った。']},
+normal:{t:'変わらない親友',l:['n|あの夜以来、ハルキとはこれまで通りの親友だ。','n|でも時々、ハルキが何か言いかけてやめる。','n|その続きを、俺はまだ知らない。']},
+ntr:{t:'一番の座',l:['n|翌日、ハルキはサキと並んで登校していた。','h|smile|あ、クボ。……俺、サキと付き合うことにしたんだ。','k|……そっか。おめでとう。','n|親友として祝福した。ちゃんと笑えていたと思う。','n|でも、ハルキの「一番」は、もう俺じゃなかった。']}
+}};
+
+/* ---------- エミリー（留学生・女子） ---------- */
+ROUTES.emily={rival:'久我ショウ',ch:[
+{bg:'gate',title:'第一話　はじめまして、ニッポン',l:[
+'n|十月の朝。校門の前で、金髪の女の子がきょろきょろしていた。',
+'h|surprised|Oh no… すみません！ 職員室、どこ？ I am lost!',
+'k|えっと……こっち。案内するよ。',
+'h|smile|Thank you so much! あなた、とても優しい！',
+'h|smile|私はエミリー・ウォーカー。イギリスから来ました。日本のアニメ、大好き！',
+'n|職員室への道すがら、エミリーは目を輝かせて校舎を見回していた。',
+Q(o('困ったことがあったら、いつでも言ってくれ',2,0,0,'h|blush|……本当？ じゃあ、さっそくお願いがあります。連絡先、交換して！'),
+  o('日本、気に入った？',1,0,0,'h|smile|Yes! ぜんぶ、すごい！ 自販機も、紅葉も、あなたも！'),
+  o('じゃあ、あとは先生に聞いてね',0,2,0,'h|sad|あ……はい。ありがとう、ございました。')),
+'n|職員室の前で、学級委員の久我ショウが声をかけてきた。',
+'r|ウォーカーさんだね。クラス委員長の久我です。校内は僕が案内するよ。',
+'h|smile|Wow, ありがとう！ 久我くん、親切！',
+'n|ほっとしたような、少し寂しいような気持ちで、俺は二人を見送った。']},
+{bg:'fest',title:'第二話　秋祭りの夜',l:[
+'n|土曜日。近所の神社で秋祭りがある。エミリーに「一緒に行きたい！」と誘われた。',
+'h|surprised|すごい！ これが「屋台」！ たこ焼き、りんご飴、金魚すくい！',
+'h|smile|Kubo-kun、これ、どうやって食べる？ ……あ、あっつ！',
+Q(o('ふーふーしてから食べるんだよ。ほら',2,0,0,'h|blush|……！ これ、少しドキドキします……'),
+  o('気をつけろよ。猫舌なんだから',1,0,0,'h|smile|Thank you! 優しい！'),
+  o('そんなに急いで食べるからだ',0,1,0,'h|sad|Sorry……')),
+'n|射的の屋台。エミリーは、小さなうさぎのぬいぐるみをじっと見ている。',
+'h|normal|……かわいい。でも、むずかしそう。',
+Q(o('任せろ。絶対取ってやる',2,0,0,'n|数発目で、見事にぬいぐるみが落ちた。','h|blush|すごい！ Kubo-kun、ヒーローです！'),
+  o('一緒にやってみようぜ',1,0,0,'h|smile|Yes! 二人で挑戦！'),
+  o('諦めたほうがいいかもな',0,1,0,'h|sad|……そう、ですか。'))]},
+{bg:'class',title:'第三話　ホームシック',l:[
+'n|文化祭準備が進む放課後。エミリーが、教室の隅で一人うつむいていた。',
+'h|sad|……Kubo-kun。私、少しだけ、家が恋しいです。',
+'h|sad|みんな優しい。でも、ときどき、言葉が追いつかなくて、一人みたいに感じる。',
+'n|そこへ、ショウがやってきた。',
+'r|ウォーカーさん、大丈夫？ 僕でよければ、いつでも話を聞くよ。',
+'h|normal|久我くん……Thank you.',
+Q(o('エミリー、俺がいる。言葉が分からなくても、ずっと隣にいるから',2,0,0,'h|blush|……Kubo-kun……'),
+  o('大丈夫。ゆっくり慣れていけばいいよ',1,0,0,'h|smile|……はい。ありがとう。'),
+  o('久我の言う通りだな。頼りになるやつだ',0,2,0,'h|sad|……そう、ですね。')),
+'n|その夜、エミリーから届いたメッセージは、拙い日本語で書かれていた。',
+'n|「きょうは ありがとう。あなたの となりが いちばん あんしんします」',
+Q(o('「俺も、エミリーの隣が一番楽しいよ」と返す',2,0,0,'n|返信はすぐに既読になった。「Me too」と、ハートのスタンプが届いた。'),
+  o('「おやすみ」とだけ返す',0,1,0,'n|既読は、なかなかつかなかった。'))]},
+{bg:'festnight',title:'最終話　後夜祭、そして告白',l:[
+'n|文化祭当日。エミリーの手作りスコーンは、教室の喫茶で大人気だった。',
+'n|後夜祭。校庭の火を前に、エミリーが俺の袖を引いた。',
+'h|blush|Kubo-kun。ちょっと、ここ、来て。',
+'h|blush|日本語、ちゃんと言うね。……私は、あなたが、好きです。',
+'h|blush|英語でも言える。I love you. でも、日本語のほうが、心にとどく気がする。',
+Q(o('俺も好きだ。エミリー、ずっと隣にいてくれ',2,0,0,'h|smile|……Yes! ずっと、ずっと！'),
+  o('言葉が違っても、気持ちは同じだ。好きだよ',2,0,0,'h|blush|……Kubo-kun。泣きそう。'),
+  o('ありがとう。……でも、少し時間をくれ',0,2,0,'h|sad|……はい。待ちます。ちゃんと。'))]}
+],end:{
+true:{t:'I love you の、その先に',l:['h|smile|I am so happy! 日本に来て、よかった！','h|blush|ねえ、Kubo-kun。日本語で、もう一回言って。','k|……好きだよ、エミリー。','n|火の粉が夜空に舞う。エミリーの涙は、笑顔といっしょに光っていた。']},
+normal:{t:'まだ、友達',l:['h|smile|でも、私、あきらめない。いつか、あなたの「好き」を聞くまで。','n|エミリーは今も隣で笑っている。友達のままの距離が、少しもどかしい。','n|それでも、彼女と過ごす毎日は、確かに特別だった。']},
+ntr:{t:'ガイドは彼になった',l:['n|翌週、エミリーの隣にはいつもショウがいた。','h|smile|あ、Kubo-kun。久我くんが、いろんな所へ連れて行ってくれるの。すごく楽しい！','n|あの日、ぬいぐるみを胸に抱えて笑ったエミリーは、もう俺の隣にはいなかった。']}
+}};
+
+/* ---------- レオン（留学生・男子） ---------- */
+ROUTES.leon={rival:'白鳥ミツキ',ch:[
+{bg:'art',title:'第一話　美術室の転校生',l:[
+'n|放課後の美術室。俺は美術部の友人に頼まれ、道具を片付けにきていた。',
+'n|そこに、白いシャツ姿の少年が、静かにキャンバスを見つめていた。',
+'h|normal|……あなたも、絵を？',
+'k|いや、俺は付き添いで。……君、見ない顔だな。',
+'h|smile|レオン・ベルナール。フランスから、交換留学で来ました。よろしく。',
+'h|normal|この絵の、光の描き方が好きです。日本の秋は、光が柔らかい。',
+Q(o('レオンの目には、この世界がきれいに見えるんだな',2,0,0,'h|blush|……そんなふうに言われたのは、初めてです。'),
+  o('絵、詳しいんだな',1,0,0,'h|smile|少しだけ。好きなだけです。'),
+  o('美術室は部外者立ち入り禁止だぞ',0,2,0,'h|normal|……それは、失礼しました。')),
+'n|そこに、美術部の白鳥ミツキが入ってきた。',
+'r|あ、レオンくん！ スケッチ、続きやろう！',
+'h|smile|ええ。……今行きます。',
+'n|レオンは丁寧にお辞儀をして、彼女と共に去っていった。']},
+{bg:'town',title:'第二話　古書店と美術館',l:[
+'n|日曜日。レオンに誘われ、古書店街と小さな美術館を巡ることになった。',
+'h|smile|日本の画集は、紙の匂いまで美しい。……Kubo、あなたと来られてよかった。',
+'k|俺なんかで良かったのか？',
+'h|normal|あなたは、静かに隣にいてくれる。それが、心地いい。',
+Q(o('レオンの隣は、俺も落ち着く',2,0,0,'h|blush|……Merci. その言葉、胸にしまっておきます。'),
+  o('それなら、また一緒に行こう',1,0,0,'h|smile|ええ。楽しみにしています。'),
+  o('もっと他に、誘いたい人がいたんじゃないか？',0,2,0,'h|normal|……いいえ。……いえ、どうでしょう。')),
+'n|美術館の一枚の絵の前で、レオンが立ち止まった。',
+'h|normal|この絵は、「待っている人」の絵です。誰かを待ち続ける、静かな横顔。',
+'h|sad|僕は、日本に来てから、少しだけ待っていた気がします。……誰かを。',
+Q(o('その「誰か」は、見つかったか？',2,0,0,'h|blush|……ええ。たぶん、今、隣にいます。'),
+  o('見つかるといいな',1,0,0,'h|smile|……ええ。きっと。'),
+  o('……俺には、よくわからないな',0,1,0,'h|normal|そう、ですか。'))]},
+{bg:'art',title:'第三話　二人の作品',l:[
+'n|文化祭準備。美術部の展示に、レオンとミツキが共作の作品を出すことになった。',
+'n|俺は搬入の手伝いで美術室に通うことになった。',
+'r|レオンくん、この色、もっと暖かくしたほうがいいかな？',
+'h|smile|そうですね。ミツキさんの感性、素敵です。',
+'n|二人の距離が、少しだけ近い。胸の奥がざわつく。',
+Q(o('レオン、ちょっと手伝ってほしいものがあるんだ',2,0,0,'h|smile|ええ、もちろん。……ミツキさん、少し失礼します。'),
+  o('黙って見守る',0,1,0,'h|normal|……Kubo？'),
+  o('楽しそうだな。俺は帰るよ',0,2,0,'h|surprised|Kubo……？ 待ってください……')),
+'bg|sunset',
+'n|夕暮れの廊下。レオンが、俺を呼び止めた。',
+'h|sad|ミツキさんに、告白されました。',
+'h|normal|僕は、返事を、まだしていません。……あなたに、聞いてほしかった。',
+Q(o('……俺は、レオンに行ってほしくない',2,0,0,'h|blush|……Kubo。……ありがとう。その言葉が、聞きたかった。'),
+  o('レオンの気持ちを大事にしてくれ',1,0,0,'h|normal|……僕の、気持ち。'),
+  o('お前が決めればいい',0,2,0,'h|sad|……そう、ですか。'))]},
+{bg:'night',title:'最終話　後夜祭、月と絵筆',l:[
+'n|文化祭の夜。校庭の隅で、レオンがスケッチブックを開いていた。',
+'h|smile|Kubo、見てください。',
+'n|そこに描かれていたのは、俺の横顔だった。',
+'h|blush|ずっと、あなたを描いていました。日本で一番、描きたかった人だから。',
+'h|blush|Je t’aime. ……あなたが、好きです。',
+Q(o('俺も、レオンが好きだ。ずっと隣にいてくれ',2,0,0,'h|blush|……Merci, mon cœur.'),
+  o('レオンの絵になれて、嬉しい。俺も好きだ',2,0,0,'h|smile|……ああ、僕は今、世界一幸せです。'),
+  o('ありがとう。でも……少し、整理させてほしい',0,2,0,'h|sad|……ええ。待ちます。'))]}
+],end:{
+true:{t:'隣にいる人',l:['h|smile|あの絵の「待っている人」は、きっと、僕のことでした。','h|blush|でももう、待たなくていい。あなたが、そばにいるから。','n|レオンの描いた絵は、文化祭の最優秀作品に選ばれた。','n|題名は、「隣にいる人」。']},
+normal:{t:'友達の肖像',l:['n|レオンの留学期間は、あっという間に過ぎた。','h|smile|いつか、フランスに来てください。あなたに、見せたい景色が、たくさんあります。','n|あの日のスケッチは、今も俺の机の中にある。']},
+ntr:{t:'別の誰かを描く筆',l:['n|冬が近づいたころ、美術部の展示室に、新しい絵が飾られた。','n|描かれていたのは、ミツキの横顔だった。','h|smile|Kubo。僕、ミツキさんと付き合うことにしました。……あなたには、一番に報告したくて。','n|レオンの筆は、もう俺を描かない。']}
+}};
+
+/* ---------- ルナ（トランスジェンダー女子） ---------- */
+ROUTES.luna={rival:'朝倉レイジ',ch:[
+{bg:'class',title:'第一話　転入生のルナ',l:[
+'n|十月の朝。二年B組に、転入生がやってきた。',
+'h|sad|神楽坂ルナです。……よろしくお願いします。',
+'n|先生に示された席は、俺の隣だった。',
+'h|normal|あ、あの……教科書、まだ届いてなくて。',
+'k|いいよ、見せるよ。机、くっつけようか。',
+'h|smile|……ありがとう。あなた、名前は？',
+'k|クボ。よろしく。',
+Q(o('わからないことがあったら、何でも聞いて',2,0,0,'h|blush|……うん。頼りにするね。'),
+  o('転入、緊張するよな。俺も去年そうだった',1,0,0,'h|smile|ふふ。そうなんだ。少し、安心した。'),
+  o('ふーん。まあ、頑張れよ',0,1,0,'h|normal|……うん。')),
+'n|昼休み。クラスの委員長・朝倉レイジが、ルナに話しかけてきた。',
+'r|神楽坂さん、校内を案内するよ。困ったことがあったら何でも言って。',
+'h|smile|ありがとうございます。助かります。',
+'n|ルナの笑顔は、ほんの少しだけ硬かった。']},
+{bg:'roof',title:'第二話　屋上で聞いた秘密',l:[
+'n|数日後の昼休み、屋上。ルナが、思い詰めたように立っていた。',
+'h|sad|クボくんに、話しておきたいことがあるの。',
+'h|sad|わたし、前の学校では「男の子」として扱われてた。でも、本当は、ずっと女の子だったの。',
+'h|normal|……気持ち悪いって、思う？',
+Q(o('ルナはルナだろ。話してくれて、ありがとう',2,0,0,'h|surprised|……！ ……ありがとう。そう言ってもらえたの、初めて。'),
+  o('そうなんだ。……少し驚いたけど、ルナはルナだよ',1,0,0,'h|smile|うん。驚くのは、当たり前だよね。……ありがとう。'),
+  o('え、マジで？',0,2,0,'h|sad|……あ、ごめんね。変なこと言って。忘れて。')),
+'h|normal|ここでは、わたしらしく過ごしたいの。……でも、バレるのが、まだ怖い。',
+Q(o('困ったときは、俺に言って。絶対、味方でいる',2,0,0,'h|blush|……うん。……うん、ありがとう。'),
+  o('誰にも言わないよ。約束する',1,0,0,'h|smile|ありがとう。クボくんを信じる。'),
+  o('あんまり気にしすぎじゃないか？',0,1,0,'h|sad|……そう、かもね。'))]},
+{bg:'class',title:'第三話　ひそひそ声',l:[
+'n|文化祭準備が始まった教室で、ルナの噂話が、ひそひそと聞こえるようになった。',
+'h|sad|……聞こえちゃった、かな。',
+Q(o('ルナの隣に座って、堂々と一緒に作業する',2,0,0,'h|blush|クボくん……'),
+  o('ルナの代わりに、噂していたやつらに言い返す',2,0,0,'h|surprised|……クボくん、ありがとう。でも、無理しないでね。'),
+  o('気にするなと言って、そっと距離を取る',0,2,0,'h|sad|……うん。そう、だよね。')),
+'n|そこへ、レイジがやってきた。',
+'r|神楽坂さん、俺は君の味方だ。何かあったら言ってくれ。',
+'h|normal|……ありがとう、朝倉くん。',
+'bg|sunset',
+'n|帰り道、ルナがぽつりと言った。',
+'h|sad|わたしね、クボくんの隣にいると、安心するの。……でも、わたしでいいのかなって、不安にもなる。',
+Q(o('ルナがいい。ルナじゃなきゃ、だめだ',2,0,0,'h|blush|……っ。……うん。ありがとう。'),
+  o('不安にならなくていいよ',1,0,0,'h|smile|うん。……そう言ってくれるの、うれしい。'))]},
+{bg:'night',title:'最終話　わたしのままで',l:[
+'n|文化祭当日。ルナは、クラスの喫茶店で、堂々と接客をやり遂げた。',
+'n|後夜祭。校庭の灯りが、遠くで揺れている。',
+'h|normal|クボくん。……今日、楽しかった。',
+'h|blush|わたしね、ずっと言えなかったことがあるの。',
+'h|blush|クボくんのことが、好きです。……わたしとして、ちゃんと、あなたの隣にいたい。',
+Q(o('俺も、ルナが好きだ。ルナのままで、隣にいてくれ',2,0,0,'h|blush|……っ！ ……ありがとう。ありがとう……'),
+  o('ルナが好きだ。最初に隣に座った日から、ずっと',2,0,0,'h|smile|……わたしも。……わたしも、その日から。'),
+  o('俺は……少し、考えさせてほしい',0,2,0,'h|sad|……うん。ごめんね。急に言って。'))]}
+],end:{
+true:{t:'わたしのままで',l:['h|smile|わたし、ここに来て、本当によかった。','h|blush|ねえ、クボくん。これからも、隣にいてね。','k|もちろん。ずっと。','n|ルナは、少しだけ涙を浮かべて、今までで一番きれいに笑った。']},
+normal:{t:'そっと、隣の席',l:['n|文化祭が終わっても、ルナは隣の席にいる。','h|smile|クボくん。……わたし、ここで頑張れそう。ありがとう。','n|恋にはならなかったけれど、大切な友達として、俺たちは隣にいる。']},
+ntr:{t:'もう一つの隣',l:['n|文化祭のあと、ルナの隣にはいつもレイジがいた。','h|smile|あ、クボくん。……朝倉くんが、わたしのこと、ずっと気にかけてくれて。','n|ルナが笑っている。それは嬉しいことのはずなのに、胸の奥が痛かった。','n|俺は、あの日の屋上で、もっと言えたはずの言葉を飲み込んだままだった。']}
+}};
+
+/* ================= エンジン ================= */
+const $=s=>document.querySelector(s);
+const TYPES={true:'HAPPY END',normal:'NORMAL END',ntr:'BAD END — 奪われた',dark:'DARK END — ヤンデレ'};
+let G=null,busy=false,typingT=null,autoT=null,curText='',auto=false,skip=false,choosing=false,selId=null,lastHeroine=null;
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));if(id)$('#'+id).classList.add('show');}
+function setBg(b,noFlash){$('#game').className='bg-'+b;if(!noFlash){$('#game').classList.add('flash');setTimeout(()=>$('#game').classList.remove('flash'),650)}}
+function renderChara(ex){G.expr=ex;$('#chara').innerHTML=portrait(HEROINES[G.h],ex);}
+function hud(pop){
+  $('#gLove i').style.width=Math.min(G.love/12,1)*100+'%';
+  $('#gRival i').style.width=Math.min(G.rival/8,1)*100+'%';
+  $('#gDark i').style.width=Math.min(G.dark/4,1)*100+'%';
+  if(pop)['#gLove','#gRival','#gDark'].forEach(s=>{$(s).classList.remove('pop');void $(s).offsetWidth;$(s).classList.add('pop')});
+}
+
+/* --- ゲーム開始 --- */
+function newGame(h){
+  G={h,love:0,rival:0,dark:0,ch:0,q:[],expr:'normal',log:[]};
+  lastHeroine=h;startChapter(0);
+}
+function startChapter(i){
+  const R=ROUTES[G.h];
+  G.ch=i;G.love=G.love||0;
+  LS.set('akikoi_save',{h:G.h,love:G.love,rival:G.rival,dark:G.dark,ch:i});
+  show(null);
+  $('#gDark').style.display=HEROINES[G.h].dark?'flex':'none';
+  if(i>=R.ch.length){finishRoute();return}
+  const c=R.ch[i];
+  setBg(c.bg,true);renderChara('normal');hud();
+  $('#textbox').style.visibility='hidden';
+  G.q=c.l.slice();
+  const t=$('#chTitle');t.textContent=c.title;t.classList.add('show');
+  let done=false;const go=()=>{if(done)return;done=true;t.classList.remove('show');$('#textbox').style.visibility='visible';runLine()};
+  t.onclick=e=>{e.stopPropagation();go()};
+  setTimeout(go,2000);
+}
+function resumeGame(){
+  const s=LS.get('akikoi_save',null);if(!s||!ROUTES[s.h])return;
+  G={h:s.h,love:s.love,rival:s.rival,dark:s.dark||0,ch:s.ch,q:[],expr:'normal',log:[]};
+  lastHeroine=s.h;startChapter(s.ch);
+}
+
+/* --- 1行ずつ実行 --- */
+function runLine(){
+  clearTimeout(autoT);
+  const it=G.q.shift();
+  if(it===undefined){startChapter(G.ch+1);return}
+  if(typeof it==='object'){showChoices(it.q);return}
+  const p=it.split('|'),R=ROUTES[G.h],H=HEROINES[G.h];
+  switch(p[0]){
+    case 'bg':setBg(p[1]);runLine();return;
+    case 'n':say('',p[1],'');return;
+    case 'k':say('クボ',p[1],'k');return;
+    case 'h':renderChara(p[1]);$('#chara').classList.remove('talk');void $('#chara').offsetWidth;$('#chara').classList.add('talk');say(H.name,p[2],'h');return;
+    case 'r':say(R.rival,p[1],'r');return;
+    case 't':say(p[1],p[2],'t');return;
+    case 'end':doEnd(p[1]);return;
+    default:runLine();
+  }
+}
+function say(name,text,cls){
+  const nm=$('#name');
+  nm.textContent=name;nm.style.display=name?'block':'none';nm.className=cls;
+  if(cls==='h')nm.style.background=HEROINES[G.h].accent;else nm.style.background='';
+  curText=text;G.log.push({name,text});
+  $('#text').textContent='';$('#next').style.visibility='hidden';
+  busy=true;let i=0;clearInterval(typingT);
+  if(skip){finishText();return}
+  typingT=setInterval(()=>{i++;$('#text').textContent=text.slice(0,i);if(i>=text.length)finishText()},24);
+}
+function finishText(){
+  clearInterval(typingT);$('#text').textContent=curText;busy=false;$('#next').style.visibility='visible';
+  clearTimeout(autoT);
+  if(skip)autoT=setTimeout(advance,70);
+  else if(auto)autoT=setTimeout(advance,1200+curText.length*55);
+}
+function advance(){
+  if(choosing||!G||$('#chTitle').classList.contains('show'))return;
+  if(busy){finishText();return}
+  runLine();
+}
+function showChoices(opts){
+  choosing=true;skip=false;$('#bSkip').classList.remove('on');
+  const box=$('#choices');box.innerHTML='';
+  opts.forEach(op=>{
+    const b=document.createElement('button');b.textContent=op.t;
+    b.onclick=e=>{
+      e.stopPropagation();
+      G.love+=op.l;G.rival+=op.r;G.dark+=op.d;hud(true);
+      G.log.push({name:'▶選択',text:op.t});
+      box.classList.remove('show');choosing=false;
+      G.q.unshift(...op.a);runLine();
+    };
+    box.appendChild(b);
+  });
+  box.classList.add('show');
+}
+
+/* --- エンディング --- */
+function calcEnd(){
+  const R=ROUTES[G.h];
+  if(R.darkEnd&&G.dark>=3&&G.love>=8)return 'dark';
+  if(G.rival>=5&&G.love<9)return 'ntr';
+  if(G.love>=8)return 'true';
+  return 'normal';
+}
+function finishRoute(){
+  const k=calcEnd(),e=ROUTES[G.h].end[k];
+  G.q=e.l.slice();G.q.push('end|'+k);
+  setBg(k==='ntr'?'sunset':k==='dark'?'night':'festnight');
+  renderChara(k==='dark'?'dark':k==='ntr'?'smile':k==='true'?'blush':'normal');
+  $('#textbox').style.visibility='visible';runLine();
+}
+function doEnd(k){
+  const e=ROUTES[G.h].end[k];
+  const got=LS.get('akikoi_end',{});got[G.h+':'+k]=1;LS.set('akikoi_end',got);
+  try{localStorage.removeItem('akikoi_save')}catch(x){}
+  $('#endType').textContent=TYPES[k];
+  $('#endTitle').textContent='「'+e.t+'」';
+  const total=Object.keys(ROUTES).reduce((n,id)=>n+Object.keys(ROUTES[id].end).length,0);
+  $('#endCount').textContent=HEROINES[G.h].name+'ルート　／　回収済みエンディング '+Object.keys(got).length+' / '+total+'\n（好感度 '+G.love+'・ライバル '+G.rival+(HEROINES[G.h].dark?'・執着 '+G.dark:'')+'）';
+  show('endScr');
+}
+
+/* --- ギャラリー --- */
+function renderGal(){
+  const got=LS.get('akikoi_end',{}),body=$('#galBody');body.innerHTML='';
+  ORDER.forEach(id=>{
+    const d=document.createElement('div');d.className='gal';
+    let h='<b>'+HEROINES[id].name+'</b>（'+HEROINES[id].role+'）<br>';
+    Object.keys(ROUTES[id].end).forEach(k=>{
+      const ok=got[id+':'+k];
+      h+='<span class="'+(ok?'ok':'')+'">'+(ok?ROUTES[id].end[k].t:'？？？')+'</span>';
+    });
+    d.innerHTML=h;body.appendChild(d);
+  });
+}
+
+/* --- ヒロイン選択 --- */
+function buildSelect(){
+  const g=$('#grid');g.innerHTML='';selId=null;$('#sStart').disabled=true;
+  $('#info').textContent='キャラクターを選ぶと紹介が表示されます。';
+  ORDER.forEach(id=>{
+    const H=HEROINES[id],c=document.createElement('div');c.className='card';
+    c.innerHTML='<div class="pt">'+portrait(H,'smile',true)+'</div><b>'+H.name+'</b><span class="tag b">'+H.role+'</span><span class="tag">'+H.type+'</span>';
+    c.onclick=()=>{
+      document.querySelectorAll('.card').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');
+      selId=id;$('#sStart').disabled=false;
+      $('#info').innerHTML='<b>'+H.name+'</b>　<span class="tag b">'+H.role+'</span><span class="tag">'+H.type+'</span><br>'+H.desc;
+    };
+    g.appendChild(c);
+  });
+}
+
+/* --- 入力・UI --- */
+$('#game').addEventListener('click',advance);
+document.addEventListener('keydown',e=>{
+  if(!$('#game')||document.querySelector('.screen.show')||$('#logScr').classList.contains('show'))return;
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();advance()}
+});
+$('#menu').addEventListener('click',e=>e.stopPropagation());
+$('#bAuto').onclick=()=>{auto=!auto;skip=false;$('#bAuto').classList.toggle('on',auto);$('#bSkip').classList.remove('on');if(auto&&!busy&&!choosing)finishText()};
+$('#bSkip').onclick=()=>{skip=!skip;auto=false;$('#bSkip').classList.toggle('on',skip);$('#bAuto').classList.remove('on');if(skip&&!choosing)advance()};
+$('#bLog').onclick=()=>{
+  $('#logBody').innerHTML=(G?G.log:[]).slice(-80).map(l=>'<p>'+(l.name?'<b>'+l.name+'</b>　':'')+l.text.replace(/</g,'&lt;')+'</p>').join('');
+  $('#logScr').classList.add('show');$('#logBody').scrollTop=1e6;
+};
+$('#logClose').onclick=()=>$('#logScr').classList.remove('show');
+$('#bTitle').onclick=()=>{if(confirm('タイトルへ戻りますか？（進行状況はチャプター開始時点で自動保存されています）')){auto=skip=false;$('#bAuto').classList.remove('on');$('#bSkip').classList.remove('on');toTitle()}};
+function toTitle(){clearTimeout(autoT);clearInterval(typingT);choosing=false;$('#choices').classList.remove('show');$('#tCont').disabled=!LS.get('akikoi_save',null);show('titleScr')}
+$('#tNew').onclick=()=>{buildSelect();show('selectScr')};
+$('#tCont').onclick=resumeGame;
+$('#tGal').onclick=()=>{renderGal();show('galScr')};
+$('#gBack').onclick=toTitle;
+$('#sBack').onclick=toTitle;
+$('#sStart').onclick=()=>{if(selId)newGame(selId)};
+$('#eRetry').onclick=()=>newGame(lastHeroine);
+$('#eSel').onclick=()=>{buildSelect();show('selectScr')};
+$('#eTitle').onclick=toTitle;
+toTitle();
+</script>
+</body>
+</html>
